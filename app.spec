@@ -1,4 +1,6 @@
 # -*- mode: python ; coding: utf-8 -*-
+import imageio_ffmpeg
+ffmpeg_exe = imageio_ffmpeg.get_ffmpeg_exe()
 from PyInstaller.utils.hooks import collect_all
 from PyInstaller.utils.hooks import copy_metadata
 
@@ -19,7 +21,7 @@ datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
 a = Analysis(
     ['app.py'],
     pathex=[],
-    binaries=binaries,
+    binaries=[(ffmpeg_exe, '.')], # 動態將當下環境的 ffmpeg 打包進去
     datas=datas,
     hiddenimports=hiddenimports,
     hookspath=[],

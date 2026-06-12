@@ -9,6 +9,7 @@ jobs:
   build-and-release:
     name: Build and Publish
     strategy:
+      fail-fast: false # 加入這行：即使其中一個系統失敗，也不會取消另一個系統
       matrix:
         # 定義作業系統矩陣，GitHub 會為每個項目獨立啟動一台虛擬機平行運作
         os: [windows-latest, macos-latest]
