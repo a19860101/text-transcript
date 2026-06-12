@@ -12,13 +12,13 @@ jobs:
       fail-fast: false # 加入這行：即使其中一個系統失敗，也不會取消另一個系統
       matrix:
         # 定義作業系統矩陣，GitHub 會為每個項目獨立啟動一台虛擬機平行運作
-        os: [windows-latest, macos-latest]
+        os: [ windows-latest, macos-latest ]
         include:
           - os: windows-latest
-            asset_name: text-transcript.exe        # 上傳到 Release 的名稱
+            asset_name: text-transcript.zip        # 上傳到 Release 的名稱
             executable_path: dist/app.exe      # PyInstaller 產出的路徑（請依實際名稱修改）
           - os: macos-latest
-            asset_name: text-transcript             # 上傳到 Release 的名稱
+            asset_name: text-transcript.zip             # 上傳到 Release 的名稱
             executable_path: dist/app            # PyInstaller 產出的路徑（請依實際名稱修改）
 
     runs-on: ${{ matrix.os }}
@@ -52,14 +52,15 @@ jobs:
           fi
         shell: bash
 
-      - name: Rename Executable Artifact
+      - name: Compress Build Artifact (ZIP)
         run: |
-          # 將產出的檔案重命名為矩陣中定義的特殊名稱，避免多平台檔案名稱衝突
-          mv ${{ matrix.executable_path }} ${{ matrix.asset_name }}
+            cd dist
+            # 將 dist 資料夾內的所有內容打包成一個 zip 檔
+            zip -r ../${{ matrix.asset_name }} .
         shell: bash
 
       - name: Upload Artifact to GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           files: ${{ matrix.asset_name }}
-          generate_release_notes: true # 自動從小標籤之間的 commit 生成更新日誌
+          generate_release_notes: true
