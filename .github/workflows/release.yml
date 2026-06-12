@@ -18,7 +18,7 @@ jobs:
             asset_name: text-transcript.zip        # 上傳到 Release 的名稱
             executable_path: dist/app.exe      # PyInstaller 產出的路徑（請依實際名稱修改）
           - os: macos-latest
-            asset_name: text-transcript.zip             # 上傳到 Release 的名稱
+            asset_name: text-transcript-mac.zip             # 上傳到 Release 的名稱
             executable_path: dist/app            # PyInstaller 產出的路徑（請依實際名稱修改）
 
     runs-on: ${{ matrix.os }}

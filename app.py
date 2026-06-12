@@ -1,10 +1,12 @@
 import os
 import sys
 
-# 👉 終極必殺技：強制把打包後的暫存資料夾，塞進系統路徑 (PATH) 中
+# 【PyInstaller 專用修復】讓程式在打包環境中能找到旁邊的 ffmpeg
 if getattr(sys, 'frozen', False):
-    # 當程式被打包成 .app 後，sys._MEIPASS 就是它肚子裡的暫存資料夾
-    os.environ["PATH"] += os.pathsep + sys._MEIPASS
+    # 取得執行檔解壓縮後或所在資料夾的路徑
+    application_path = getattr(sys, '_MEIPASS', os.path.dirname(sys.executable))
+    # 將這個路徑加入系統 PATH 的最前面
+    os.environ["PATH"] = application_path + os.pathsep + os.environ.get("PATH", "")
 
 # 下面是你原本的匯入
 import gradio as gr

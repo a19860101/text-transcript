@@ -3,6 +3,15 @@ import imageio_ffmpeg
 ffmpeg_exe = imageio_ffmpeg.get_ffmpeg_exe()
 from PyInstaller.utils.hooks import collect_all
 from PyInstaller.utils.hooks import copy_metadata
+import shutil
+import os
+
+# 1. 動態取得環境中的 ffmpeg
+ffmpeg_src = imageio_ffmpeg.get_ffmpeg_exe()
+# 2. 判斷是 Windows 還是 Mac，給予標準的檔名
+ffmpeg_dest_name = 'ffmpeg.exe' if os.name == 'nt' else 'ffmpeg'
+# 3. 複製並改名到目前資料夾
+shutil.copyfile(ffmpeg_src, ffmpeg_dest_name)
 
 datas = []
 binaries = [('/opt/homebrew/bin/ffmpeg', '.')]
@@ -21,7 +30,7 @@ datas += tmp_ret[0]; binaries += tmp_ret[1]; hiddenimports += tmp_ret[2]
 a = Analysis(
     ['app.py'],
     pathex=[],
-    binaries=[(ffmpeg_exe, '.')], # 動態將當下環境的 ffmpeg 打包進去
+    binaries=[(ffmpeg_dest_name, '.')], # 動態將當下環境的 ffmpeg 打包進去
     datas=datas,
     hiddenimports=hiddenimports,
     hookspath=[],
