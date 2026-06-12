@@ -51,12 +51,6 @@ pydub==0.25.1
 Pygments==2.20.0
 pyinstaller==6.20.0
 pyinstaller-hooks-contrib==2026.6
-pyobjc-core==12.2
-pyobjc-framework-Cocoa==12.2
-pyobjc-framework-Quartz==12.2
-pyobjc-framework-Security==12.2
-pyobjc-framework-UniformTypeIdentifiers==12.2
-pyobjc-framework-WebKit==12.2
 python-dateutil==2.9.0.post0
 python-dotenv==1.2.2
 python-multipart==0.0.32

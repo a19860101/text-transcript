@@ -22,7 +22,7 @@ a = Analysis(
     ['app.py'],
     pathex=[],
     binaries=[(ffmpeg_exe, '.')], # 動態將當下環境的 ffmpeg 打包進去
-    datas=datas,
+    datas=datas,｀
     hiddenimports=hiddenimports,
     hookspath=[],
     hooksconfig={},
