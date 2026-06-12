@@ -56,7 +56,7 @@ jobs:
         run: |
             cd dist
             # 將 dist 資料夾內的所有內容打包成一個 zip 檔
-            zip -r ../${{ matrix.asset_name }} .
+            python -m zipfile -c ../${{ matrix.asset_name }} .
         shell: bash
 
       - name: Upload Artifact to GitHub Release
