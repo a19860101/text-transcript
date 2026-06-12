@@ -1,0 +1,64 @@
+name: Cross-Platform Auto Release
+
+on:
+  push:
+    tags:
+      - 'v*' # 當 push 以 v 開頭的標籤（如 v1.0.0）時觸發
+
+jobs:
+  build-and-release:
+    name: Build and Publish
+    strategy:
+      matrix:
+        # 定義作業系統矩陣，GitHub 會為每個項目獨立啟動一台虛擬機平行運作
+        os: [windows-latest, macos-latest]
+        include:
+          - os: windows-latest
+            asset_name: text-transcript.exe        # 上傳到 Release 的名稱
+            executable_path: dist/app.exe      # PyInstaller 產出的路徑（請依實際名稱修改）
+          - os: macos-latest
+            asset_name: text-transcript             # 上傳到 Release 的名稱
+            executable_path: dist/app            # PyInstaller 產出的路徑（請依實際名稱修改）
+
+    runs-on: ${{ matrix.os }}
+    permissions:
+      contents: write # 開啟寫入權限，以便上傳檔案至 Release
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.14' # 設定你的 Python 版本
+          cache: 'pip'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pyinstaller
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        shell: bash # 強制使用 bash 以確保 Windows 與 Mac 的指令相容
+
+      - name: Build with PyInstaller
+        run: |
+          # 如果你有客製化的 .spec 檔案，請將 main.py 改為你的方案（例如：pyinstaller main.spec）
+          if [ -f app.spec ]; then
+            pyinstaller app.spec
+          else
+            pyinstaller --windowed --collect-all gradio --collect-all whisper --collect-all safehttpx --collect-all groovy --collect-all imageio_ffmpeg --copy-metadata imageio --hidden-import moviepy app.py
+          fi
+        shell: bash
+
+      - name: Rename Executable Artifact
+        run: |
+          # 將產出的檔案重命名為矩陣中定義的特殊名稱，避免多平台檔案名稱衝突
+          mv ${{ matrix.executable_path }} ${{ matrix.asset_name }}
+        shell: bash
+
+      - name: Upload Artifact to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: ${{ matrix.asset_name }}
+          generate_release_notes: true # 自動從小標籤之間的 commit 生成更新日誌
