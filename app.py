@@ -1,6 +1,6 @@
 import os
 import sys
-
+import shutil # 👉 新增這行，用來複製檔案
 # 【PyInstaller 專用修復】讓程式在打包環境中能找到旁邊的 ffmpeg
 if getattr(sys, 'frozen', False):
     # 取得執行檔解壓縮後或所在資料夾的路徑
@@ -68,6 +68,10 @@ def process_media(file_path, model_size):
                 end_time = format_timestamp(segment["end"])
                 text = segment["text"].strip()
                 f.write(f"{i}\n{start_time} --> {end_time}\n{text}\n\n")
+                # 👉 5. 新增自動化流程：把檔案直接複製到 Mac 桌面
+        desktop_path = os.path.expanduser("~/Desktop")  # 抓取使用者的桌面路徑
+        final_dest = os.path.join(desktop_path, "自動生成字幕_Whisper.srt")
+        shutil.copy(srt_path, final_dest)
 
         yield f"✅ 成功！字幕已生成，請點擊下方按鈕下載。", srt_path
 
